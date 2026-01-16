@@ -1,6 +1,6 @@
 
 # ASP.NET ChatApp 
-(PHP/JS Polling → ASP.NET Core/WebSocket)
+**(PHP/JS Polling → ASP.NET Core/WebSocket)**
 
 기존 **PHP + JavaScript(AJAX 폴링)** 기반 1:1 채팅을 **ASP.NET Core + WebSocket** 으로 이식한 프로젝트입니다.  
 레거시의 “주기적 조회” 방식 대신, 서버가 클라이언트에 **즉시 Push** 하는 실시간 구조로 변경했습니다.
