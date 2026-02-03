@@ -57,36 +57,41 @@
   - 삭제 시 기본 이미지로 복귀(이전 파일 정리)
 
 ---
+### 실시간 채팅 메세지 플로우
 
-## 3) API / Endpoints
+현재 서버는 메시지를 영구 저장하지 않고, **웹소켓이 연결된 상태에서만 실시간으로 Relay**하는 구조입니다.  
+다음은 **사용자 A**가 **사용자 B**에게 메시지를 보낼 때의 내부 처리 과정입니다.
 
-### Pages
-- `/users.html`  
-  유저 목록 + 내 프로필 이미지 변경 UI
+```mermaid
+flowchart TD
+    %% 노드 스타일 정의
+    classDef actor fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef server fill:#ececff,stroke:#9370db,stroke-width:2px;
+    classDef decision fill:#fff5ad,stroke:#d4aa00,stroke-width:2px;
+    classDef fail fill:#ffebee,stroke:#c62828,stroke-width:2px,stroke-dasharray: 5 5;
 
-- `/chat.html?other={email}`  
-  특정 유저와의 1:1 채팅 UI
+    %% 액터 및 시작
+    UserA([Sender]) -->|1. 메시지 전송| Hub[ASP.NET Hub]
+    
+    %% 서버 로직
+    subgraph Server_Side [Server Logic]
+        direction TB
+        Hub --> Check{수신자 접속 중?}
+        
+        %% 분기 처리 (따옴표 추가로 에러 수정)
+        Check -- YES (Online) --> Push[즉시 Push]
+        Check -- NO (Offline) --> Drop["전송 불가 (메시지 소실)"]
+    end
 
-### REST API
-- `GET /api/me`  
-  내 정보 조회 (name / email / imageUrl)
-- `GET /api/users`  
-  유저 목록 조회 (email / name / isOnline)
-- `POST /api/profile-image`  
-  프로필 이미지 업로드 (예: 2MB 제한, jpg/png/gif/webp)
-- `DELETE /api/profile-image`  
-  프로필 이미지 삭제(기본 이미지로 복귀)
-  
-### SignalR Hub
-- `GET /hubs/chat`  
-  인증 사용자만 연결 가능(Authorize)
-
-**Client → Server**
-- `JoinDm(otherEmail)` : 1:1 DM 그룹(대화방) 참가
-- `SendDm(otherEmail, message)` : 상대에게 DM 전송
-
-**Server → Client**
-- `message(user, message)` : 메시지 수신 이벤트
+    %% 최종 전달
+    Push -.->|WebSocket| UserB([Receiver])
+    
+    %% 스타일 적용
+    class UserA,UserB actor;
+    class Hub,Push server;
+    class Check decision;
+    class Drop fail;
+```
 
 ---
 
