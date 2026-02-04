@@ -1,0 +1,146 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+	<meta charset="utf-8" />
+	<title>Users</title>
+	<link rel="stylesheet" href="/style.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+	<div class="wrapper">
+		<section class="users">
+			<header>
+				<div class="content">
+					<div class="avatar-wrap">
+						<img id="myImg" src="/pimg.png">
+							<input type="file" id="imageInput" style="display:none;" accept="image/*">
+						<button type="button" class="icon-btn" onclick="document.getElementById('imageInput').click()">
+							<i class="fas fa-camera"></i>
+						</button>
+					</div>
+					<div class="details">
+						<span id="myName">ME</span>
+						<p>온라인</p>
+					</div>
+				</div>
+				<a href="/logout" class="logout">로그아웃</a>
+			</header>
+			<div class="search">
+				<span class="text">채팅할 친구를 선택하세요</span>
+				<input id="searchInput" type="text" placeholder="검색" />
+				<button id="searchBtn" type="button">
+					<i class="fas fa-search"></i>
+				</button>
+			</div>
+			<div class="user-list" id="userList"></div>
+		</section>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/@microsoft/signalr@8.0.7/dist/browser/signalr.min.js"></script>
+	<script>
+		(async () => {
+
+			const userList = document.getElementById("userList");
+			const searchInput = document.getElementById("searchInput");
+			const searchBtn = document.getElementById("searchBtn");
+			const myName = document.getElementById("myName");
+			const myImg = document.getElementById("myImg");
+			const imageInput = document.getElementById("imageInput");
+			let users = [];
+
+			// 내 정보
+			const meRes = await fetch("/api/me", { credentials: "include" });
+			if (meRes.ok) {
+				const me = await meRes.json();
+				myName.textContent = me.name || "ME";
+				myImg.src = (me.imageUrl || "/pimg.png") + "?v=" + Date.now();
+			}
+
+			// 유저 목록 그리기
+			function draw(list) {
+				userList.innerHTML = "";
+				list.forEach(u => {
+					const item = document.createElement("a");
+					item.href = "/chat.html?other=" + encodeURIComponent(u.email);
+					item.innerHTML = `
+						<div class="content">
+							<img src="${u.imageUrl || "/pimg.png"}">
+						<div class="details">
+							<span>${u.name || u.email}</span>
+						<p>${u.isOnline ? "온라인" : "오프라인"}</p>
+						</div>
+						</div>
+						<div class="status-dot ${u.isOnline ? "online" : "offline"}">
+						<i class="fas fa-circle"></i>
+						</div>`;
+					userList.appendChild(item);
+				});
+			}
+
+			// 이미지 변경
+			imageInput.onchange = async () => {
+				const file = imageInput.files[0];
+				if (!file) return;
+				const formData = new FormData();
+				formData.append("image", file);
+				const res = await fetch("/api/me/image", {
+					method: "POST",
+					body: formData,
+					credentials: "include"
+				});
+				if (res.ok) {
+					const me = await res.json();
+					myImg.src = (me.imageUrl || "/pimg.png") + "?v=" + Date.now();
+				} else {
+					alert("이미지 업로드에 실패했습니다.");
+				}
+			};
+
+			// 최초 로드
+			const res = await fetch("/api/users", { credentials: "include" });
+			if (res.ok) {
+				users = await res.json();
+				draw(users);
+			}
+
+			// 검색
+			searchInput.oninput = () => {
+				const word = searchInput.value.toLowerCase();
+				draw(users.filter(u =>
+					(u.name || "").toLowerCase().includes(word) ||
+					(u.email || "").toLowerCase().includes(word)
+				));
+			};
+
+			// 검색 버튼
+			searchBtn.onclick = () => {
+				searchInput.classList.toggle("active");
+				searchBtn.classList.toggle("active");   
+				searchInput.focus();                   
+				if (!searchInput.classList.contains("active")) {
+					searchInput.value = "";             
+					draw(users);                        
+				}
+			};
+
+			// 상태 갱신
+			const conn = new signalR.HubConnectionBuilder()
+				.withUrl("/hubs/chat")
+				.withAutomaticReconnect()
+				.build();
+
+			conn.on("presence", (email, online) => {
+				const user = users.find(u => u.email === email);
+				if (!user) return;
+				user.isOnline = online;
+				draw(users);
+			});
+
+			await conn.start();
+
+		})();
+	</script>
+
+</body>
+</html>

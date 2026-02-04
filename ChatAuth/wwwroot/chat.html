@@ -1,0 +1,118 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+	<meta charset="utf-8" />
+	<title>Chat</title>
+
+	<link rel="stylesheet" href="/style.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+	<div class="wrapper">
+		<section class="chat-area">
+
+			<header>
+				<a href="/users.html" class="back-icon">
+					<i class="fas fa-arrow-left"></i>
+				</a>
+
+				<img id="otherImg" src="/pimg.png" alt="">
+				<div class="details">
+					<span id="otherName">...</span>
+				</div>
+			</header>
+
+			<div class="chat-box" id="chatBox"></div>
+
+			<form class="typing-area" autocomplete="off">
+				<input id="msgInput" type="text" class="input-field" placeholder="메시지 입력">
+				<button id="sendBtn" type="button">
+					<i class="fab fa-telegram-plane"></i>
+				</button>
+			</form>
+
+		</section>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/@microsoft/signalr@8.0.7/dist/browser/signalr.min.js"></script>
+
+	<script>
+		(async () => {
+
+			// DOM
+			const nameText = document.getElementById("otherName");
+			const imgEl = document.getElementById("otherImg");
+			const chatBox = document.getElementById("chatBox");
+			const msgInput = document.getElementById("msgInput");
+			const sendBtn = document.getElementById("sendBtn");
+
+			// 상대 이메일
+			const otherEmail = new URLSearchParams(location.search).get("other");
+			if (!otherEmail) return;
+
+			// 상대 정보 로드
+			const userRes = await fetch("/api/users", { credentials: "include" });
+			if (userRes.ok) {
+				const users = await userRes.json();
+				const other = users.find(u => u.email === otherEmail);
+
+				if (other) {
+					nameText.textContent = other.name || other.email;
+					imgEl.src = (other.imageUrl || "/pimg.png") + "?v=" + Date.now();
+				}
+			}
+
+			// 메시지 추가
+			function addMessage(isMine, text) {
+				const box = document.createElement("div");
+				box.className = "chat " + (isMine ? "outgoing" : "incoming");
+
+				if (!isMine) {
+					const img = document.createElement("img");
+					img.src = imgEl.src;
+					box.appendChild(img);
+				}
+
+				const msg = document.createElement("div");
+				msg.className = "details";
+				msg.innerHTML = `<p>${text}</p>`;
+
+				box.appendChild(msg);
+				chatBox.appendChild(box);
+				chatBox.scrollTop = chatBox.scrollHeight;
+			}
+
+			// SignalR
+			const conn = new signalR.HubConnectionBuilder()
+				.withUrl("/hubs/chat")
+				.withAutomaticReconnect()
+				.build();
+
+			conn.on("message", (sender, text) => {
+				addMessage(sender !== otherEmail, text);
+			});
+
+			await conn.start();
+			await conn.invoke("JoinDm", otherEmail);
+
+			// 전송
+			sendBtn.onclick = async () => {
+				const text = msgInput.value.trim();
+				if (!text) return;
+
+				await conn.invoke("SendDm", otherEmail, text);
+				msgInput.value = "";
+			};
+
+			msgInput.onkeydown = (e) => {
+				if (e.key === "Enter") {
+					e.preventDefault();
+					sendBtn.click();
+				}
+			};
+
+		})();
+	</script>
+</body>
+</html>

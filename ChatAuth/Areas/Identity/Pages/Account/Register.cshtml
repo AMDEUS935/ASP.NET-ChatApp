@@ -1,0 +1,79 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "회원가입";
+    Layout = null; // 부트스트랩 레이아웃 끊고 레거시 UI만 적용
+}
+
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8" />
+    <title>회원가입</title>
+
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="wrapper">
+        <!-- style.css 구조 -->
+        <section class="form signup">
+            <header>회원가입</header>
+
+                <form id="registerForm" method="post">
+                @{
+                     var errors = ViewData.ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .Where(m => !string.IsNullOrWhiteSpace(m))
+                    .Distinct()
+                    .ToList();
+                }
+
+                @foreach (var msg in errors)
+                {
+                   <div class="error-text">@msg</div>
+                }
+
+
+                <!-- 닉네임 -->
+                <div class="field input">
+                    <label asp-for="Input.DisplayName"></label>
+                    <input asp-for="Input.DisplayName" placeholder="이름" autocomplete="nickname" />
+                </div>
+
+                <!-- 이메일 -->
+                <div class="field input">
+                    <label asp-for="Input.Email"></label>
+                    <input asp-for="Input.Email" placeholder="이메일" autocomplete="email" />
+                </div>
+
+                <!-- 비밀번호 -->
+                <div class="field input">
+                    <label asp-for="Input.Password"></label>
+                    <input asp-for="Input.Password" placeholder="비밀번호" autocomplete="new-password" />
+                </div>
+
+                <!-- 비밀번호 확인 -->
+                <div class="field input">
+                    <label asp-for="Input.ConfirmPassword"></label>
+                    <input asp-for="Input.ConfirmPassword" placeholder="비밀번호 확인" autocomplete="new-password" />
+                </div>
+
+                <div class="field button">
+                    <input type="submit" value="가입하기" />
+                </div>
+            </form>
+
+            <div class="link">
+                이미 계정이 있나요?
+                <a href="/Identity/Account/Login">로그인</a>
+            </div>
+        </section>
+    </div>
+
+    @* 클라이언트 검증(Validation) 스크립트 *@
+    <partial name="_ValidationScriptsPartial" />
+</body>
+</html>

@@ -1,0 +1,41 @@
+﻿@page
+@model LoginModel
+@{
+    Layout = null;
+}
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8" />
+    <title>로그인</title>
+
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="wrapper">
+        <section class="form login">
+            <header>로그인</header>
+
+            <form method="post">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <div class="error-text">@error.ErrorMessage</div>
+                }
+                <div class="field input">
+                    <input asp-for="Input.Email" placeholder="이메일" required />
+                </div>
+                <div class="field input">
+                    <input asp-for="Input.Password" placeholder="비밀번호" required />
+                </div>
+                <div class="field button">
+                    <input type="submit" value="로그인">
+                </div>
+            </form>
+            <div class="link">
+                계정이 없나요?
+                <a href="/Identity/Account/Register">회원가입</a>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
