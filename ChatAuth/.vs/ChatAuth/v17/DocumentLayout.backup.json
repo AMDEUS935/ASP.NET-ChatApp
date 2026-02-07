@@ -3,20 +3,20 @@
   "WorkspaceRootPath": "D:\\Projects\\ASP.NET-ChatApp\\ChatAuth\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{82DCF762-D3E6-4180-9E65-0D0741A78453}|ChatAuth.csproj|d:\\projects\\asp.net-chatapp\\chatauth\\wwwroot\\chat.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{82DCF762-D3E6-4180-9E65-0D0741A78453}|ChatAuth.csproj|solutionrelative:wwwroot\\chat.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{82DCF762-D3E6-4180-9E65-0D0741A78453}|ChatAuth.csproj|d:\\projects\\asp.net-chatapp\\chatauth\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{82DCF762-D3E6-4180-9E65-0D0741A78453}|ChatAuth.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{82DCF762-D3E6-4180-9E65-0D0741A78453}|ChatAuth.csproj|d:\\projects\\asp.net-chatapp\\chatauth\\wwwroot\\users.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{82DCF762-D3E6-4180-9E65-0D0741A78453}|ChatAuth.csproj|solutionrelative:wwwroot\\users.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{82DCF762-D3E6-4180-9E65-0D0741A78453}|ChatAuth.csproj|d:\\projects\\asp.net-chatapp\\chatauth\\areas\\identity\\pages\\account\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{82DCF762-D3E6-4180-9E65-0D0741A78453}|ChatAuth.csproj|solutionrelative:areas\\identity\\pages\\account\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{82DCF762-D3E6-4180-9E65-0D0741A78453}|ChatAuth.csproj|d:\\projects\\asp.net-chatapp\\chatauth\\wwwroot\\style.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{82DCF762-D3E6-4180-9E65-0D0741A78453}|ChatAuth.csproj|solutionrelative:wwwroot\\style.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{82DCF762-D3E6-4180-9E65-0D0741A78453}|ChatAuth.csproj|d:\\projects\\asp.net-chatapp\\chatauth\\wwwroot\\javascript\\chat.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{82DCF762-D3E6-4180-9E65-0D0741A78453}|ChatAuth.csproj|solutionrelative:wwwroot\\javascript\\chat.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+      "AbsoluteMoniker": "D:0:0:{82DCF762-D3E6-4180-9E65-0D0741A78453}|ChatAuth.csproj|d:\\projects\\asp.net-chatapp\\chatauth\\wwwroot\\chat.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{82DCF762-D3E6-4180-9E65-0D0741A78453}|ChatAuth.csproj|solutionrelative:wwwroot\\chat.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -31,27 +31,40 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "chat.html",
-              "DocumentMoniker": "D:\\Projects\\ASP.NET-ChatApp\\ChatAuth\\wwwroot\\chat.html",
-              "RelativeDocumentMoniker": "wwwroot\\chat.html",
-              "ToolTip": "D:\\Projects\\ASP.NET-ChatApp\\ChatAuth\\wwwroot\\chat.html",
-              "RelativeToolTip": "wwwroot\\chat.html",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAdAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
-              "WhenOpened": "2026-02-04T13:57:40.625Z",
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Projects\\ASP.NET-ChatApp\\ChatAuth\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "D:\\Projects\\ASP.NET-ChatApp\\ChatAuth\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAIIAAAAAAAAAAAAswI8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-07T10:13:14.654Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "Login.cshtml",
-              "DocumentMoniker": "D:\\Projects\\ASP.NET-ChatApp\\ChatAuth\\Areas\\Identity\\Pages\\Account\\Login.cshtml",
-              "RelativeDocumentMoniker": "Areas\\Identity\\Pages\\Account\\Login.cshtml",
-              "ToolTip": "D:\\Projects\\ASP.NET-ChatApp\\ChatAuth\\Areas\\Identity\\Pages\\Account\\Login.cshtml",
-              "RelativeToolTip": "Areas\\Identity\\Pages\\Account\\Login.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-02-04T13:46:19.269Z"
+              "Title": "style.css",
+              "DocumentMoniker": "D:\\Projects\\ASP.NET-ChatApp\\ChatAuth\\wwwroot\\style.css",
+              "RelativeDocumentMoniker": "wwwroot\\style.css",
+              "ToolTip": "D:\\Projects\\ASP.NET-ChatApp\\ChatAuth\\wwwroot\\style.css",
+              "RelativeToolTip": "wwwroot\\style.css",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-02-04T16:09:46.157Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "chat.html",
+              "DocumentMoniker": "D:\\Projects\\ASP.NET-ChatApp\\ChatAuth\\wwwroot\\chat.html",
+              "RelativeDocumentMoniker": "wwwroot\\chat.html",
+              "ToolTip": "D:\\Projects\\ASP.NET-ChatApp\\ChatAuth\\wwwroot\\chat.html",
+              "RelativeToolTip": "wwwroot\\chat.html",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-02-04T16:02:07.683Z"
             },
             {
               "$type": "Document",
@@ -61,21 +74,10 @@
               "RelativeDocumentMoniker": "wwwroot\\users.html",
               "ToolTip": "D:\\Projects\\ASP.NET-ChatApp\\ChatAuth\\wwwroot\\users.html",
               "RelativeToolTip": "wwwroot\\users.html",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACkAAAAMAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAA2AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
-              "WhenOpened": "2026-02-04T13:40:29.815Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "chat.js",
-              "DocumentMoniker": "D:\\Projects\\ASP.NET-ChatApp\\ChatAuth\\wwwroot\\javascript\\chat.js",
-              "RelativeDocumentMoniker": "wwwroot\\javascript\\chat.js",
-              "ToolTip": "D:\\Projects\\ASP.NET-ChatApp\\ChatAuth\\wwwroot\\javascript\\chat.js",
-              "RelativeToolTip": "wwwroot\\javascript\\chat.js",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2026-02-04T13:29:16.957Z"
+              "WhenOpened": "2026-02-04T13:40:29.815Z",
+              "EditorCaption": ""
             }
           ]
         }

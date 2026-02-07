@@ -122,64 +122,56 @@ app.MapGet("/api/me", async (HttpContext http, UserManager<IdentityUser> userMan
 
 // 프로필 이미지 업로드 및 검증
 app.MapPost("/api/profile-image", async (
-    HttpContext http,
-    [FromForm] IFormFile file,
-    UserManager<IdentityUser> userManager,
-    IWebHostEnvironment env) =>
+	HttpContext context,
+	[FromForm] IFormFile file,
+	UserManager<IdentityUser> userManager,
+    SignInManager<IdentityUser> signInManager,
+	IWebHostEnvironment env) =>
 {
-    try
-    {
-        var user = await userManager.GetUserAsync(http.User);
-        if (user == null) return Results.Unauthorized();
+	var user = await userManager.GetUserAsync(context.User);
+	if (user == null) return Results.Unauthorized();
 
-        if (file == null || file.Length == 0)
-            return Results.BadRequest(new { message = "Please select a file." });
-        if (file.Length > 2 * 1024 * 1024)
-            return Results.BadRequest(new { message = "Image must be <= 2MB." });
+	// 1. 유효성 검사 
+	var ext = Path.GetExtension(file?.FileName)?.ToLower();
+	var allowed = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
 
-        var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
-        var allowed = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
-        if (!allowed.Contains(ext))
-            return Results.BadRequest(new { message = "Allowed extensions: jpg, png, gif, webp." });
+	if (file == null || file.Length == 0) return Results.BadRequest("파일이 없습니다.");
+	if (file.Length > 2 * 1024 * 1024) return Results.BadRequest("2MB 이하만 가능합니다.");
+	if (!allowed.Contains(ext)) return Results.BadRequest("허용되지 않는 확장자입니다.");
 
-        var webRoot = env.WebRootPath ?? Path.Combine(env.ContentRootPath, "wwwroot");
-        var dir = Path.Combine(webRoot, "profiles");
-        Directory.CreateDirectory(dir);
+	// 2. 경로 설정 및 파일 저장
+	var profileDir = Path.Combine(env.WebRootPath, "profiles");
+	Directory.CreateDirectory(profileDir); 
 
-        var fileName = $"{Guid.NewGuid():N}{ext}";
-        var savePath = Path.Combine(dir, fileName);
+	var fileName = $"{Guid.NewGuid():N}{ext}";
+	var savePath = Path.Combine(profileDir, fileName);
 
-        using (var fs = new FileStream(savePath, FileMode.Create))
-            await file.CopyToAsync(fs);
+	using (var stream = File.Create(savePath))
+		await file.CopyToAsync(stream);
 
-        var imageUrl = "/profiles/" + fileName;
+	var imageUrl = $"/profiles/{fileName}";
 
-        var claims = await userManager.GetClaimsAsync(user);
-        var old = claims.FirstOrDefault(c => c.Type == "profile_img");
-        if (old != null) await userManager.RemoveClaimAsync(user, old);
-        await userManager.AddClaimAsync(user, new System.Security.Claims.Claim("profile_img", imageUrl));
+	// 3. 업데이트 및 기존 파일 삭제
+	var claims = await userManager.GetClaimsAsync(user);
+	var oldClaim = claims.FirstOrDefault(c => c.Type == "profile_img");
 
-        try
-        {
-            if (!string.IsNullOrWhiteSpace(old?.Value) && old.Value.StartsWith("/profiles/"))
-            {
-                var oldFileName = Path.GetFileName(old.Value);
-                var oldPhysical = Path.Combine(dir, oldFileName);
-                if (System.IO.File.Exists(oldPhysical))
-                    System.IO.File.Delete(oldPhysical);
-            }
-        }
-        catch { }
+	if (oldClaim != null)
+	{
+		await userManager.RemoveClaimAsync(user, oldClaim);
+		// 기존 파일 삭제 
+		var oldFilePath = Path.Combine(env.WebRootPath, oldClaim.Value.TrimStart('/'));
+		if (File.Exists(oldFilePath)) File.Delete(oldFilePath);
+	}
 
-        return Results.Ok(new { imageUrl });
-    }
-    catch (Exception ex)
-    {
-        return Results.Problem(ex.Message);
-    }
-});
+	await userManager.AddClaimAsync(user, new Claim("profile_img", imageUrl));
+    await signInManager.RefreshSignInAsync(user);
 
-// DELETE /api/profile-image
+	return Results.Ok(new { imageUrl });
+})
+
+.DisableAntiforgery(); 
+
+// DELETE /api/image
 app.MapDelete("/api/profile-image", async (
     HttpContext http,
     UserManager<IdentityUser> userManager,

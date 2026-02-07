@@ -13,10 +13,10 @@
 			<header>
 				<div class="content">
 					<div class="avatar-wrap">
-						<img id="myImg" src="/pimg.png">
+						<img id="myImg" src="/pimg.png" style="cursor:pointer;" onclick="document.getElementById('imageInput').click()">
 							<input type="file" id="imageInput" style="display:none;" accept="image/*">
-						<button type="button" class="icon-btn" onclick="document.getElementById('imageInput').click()">
-							<i class="fas fa-camera"></i>
+						<button type="button" id="deleteImgBtn" class="deleteImgBtn icon-btn">
+							<i class="fas fa-trash"></i>
 						</button>
 					</div>
 					<div class="details">
@@ -47,6 +47,8 @@
 			const myName = document.getElementById("myName");
 			const myImg = document.getElementById("myImg");
 			const imageInput = document.getElementById("imageInput");
+			const deleteImgBtn = document.getElementById("deleteImgBtn");
+
 			let users = [];
 
 			// 내 정보
@@ -78,22 +80,63 @@
 				});
 			}
 
-			// 이미지 변경
+			// 이미지 업로드
 			imageInput.onchange = async () => {
 				const file = imageInput.files[0];
-				if (!file) return;
 				const formData = new FormData();
-				formData.append("image", file);
-				const res = await fetch("/api/me/image", {
+
+				if (!file)
+					return;
+
+				// 보안 토큰
+				const csrfRes = await fetch("/api/csrf", { credentials: "include" });
+				const { token } = await csrfRes.json();
+
+				formData.append("file", file);
+
+				const res = await fetch("/api/profile-image",
+				{
 					method: "POST",
 					body: formData,
+					headers:
+					{
+						"X-CSRF-TOKEN": token 
+					},
+					credentials: "include"
+					});
+
+				if (res.ok)
+				{
+					const data = await res.json();
+					myImg.src = data.imageUrl + "?v=" + Date.now();
+				}
+				else
+				{
+					alert("이미지 업로드에 실패했습니다." + res.status);
+				}
+			};
+
+			// 이미지 삭제
+			deleteImgBtn.onclick = async () =>
+			{
+				// 보안 토큰 
+				const csrfRes = await fetch("/api/csrf", { credentials: "include" });
+				const { token } = await csrfRes.json();
+
+				const res = await fetch("/api/profile-image",
+				{
+					method: "DELETE",
+					headers:
+					{
+						"X-CSRF-TOKEN": token 
+					},
 					credentials: "include"
 				});
-				if (res.ok) {
-					const me = await res.json();
-					myImg.src = (me.imageUrl || "/pimg.png") + "?v=" + Date.now();
-				} else {
-					alert("이미지 업로드에 실패했습니다.");
+
+				if (res.ok)
+				{
+					myImg.src = "/pimg.png";
+					alert("이미지가 삭제되었습니다.");
 				}
 			};
 
