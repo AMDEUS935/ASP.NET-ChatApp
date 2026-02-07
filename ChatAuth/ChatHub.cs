@@ -1,7 +1,9 @@
 ﻿using System.Security.Claims;
 using ChatAuth.Data;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 
 [Authorize] // 로그인한 사람만
 public class ChatHub : Hub
@@ -13,7 +15,7 @@ public class ChatHub : Hub
         _db = db;
     }
 
-    public override async Task OnConnectedAsync()
+	public override async Task OnConnectedAsync()
     {
         var userId = Context.User?.FindFirstValue(ClaimTypes.NameIdentifier);
         if (!string.IsNullOrWhiteSpace(userId))
@@ -49,9 +51,7 @@ public class ChatHub : Hub
     }
 
 
-    // 2) 1:1 입장
-    // 클라이언트는 "상대(other)"만 보냄
-    // 나는 서버가 로그인에서 자동으로 가져옴
+    // 1:1 입장
     public Task JoinDm(string other)
     {
         var me = Me();
@@ -61,13 +61,28 @@ public class ChatHub : Hub
         return Groups.AddToGroupAsync(Context.ConnectionId, room);
     }
 
+	public async Task SendDm(string ReceiverEmail, string message)
+	{
+		var myEmail = Me(); // 현재 로그인한 내 이메일
 
-    // 3) 1:1로 보내기
-    public Task SendDm(string other, string message)
-    {
-        var me = Me();
-        var room = Room(me, other);
+		var sender = await _db.Users.FirstOrDefaultAsync(u => u.Email == myEmail);
+		var receiver = await _db.Users.FirstOrDefaultAsync(u => u.Email == ReceiverEmail);
 
-        return Clients.Group(room).SendAsync("message", me, message);
-    }
+		if (sender == null || receiver == null) return;
+
+		var chatMsg = new Message
+		{
+			SenderId = sender.Id,
+			ReceiverId = receiver.Id,
+			MessageText = message,
+			Timestamp = DateTime.UtcNow
+		};
+
+		_db.ChattingMsg.Add(chatMsg);
+		await _db.SaveChangesAsync();
+
+		// 상대방과 나에게 메시지 전송
+        var room = Room(myEmail, ReceiverEmail);
+		await Clients.Group(room).SendAsync("message", myEmail, message);
+	}
 }

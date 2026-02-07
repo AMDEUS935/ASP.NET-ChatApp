@@ -47,7 +47,7 @@
 			const msgInput = document.getElementById("msgInput");
 			const sendBtn = document.getElementById("sendBtn");
 
-			// 상대 이메일
+			// 상대 이메일 파싱
 			const otherEmail = new URLSearchParams(location.search).get("other");
 			if (!otherEmail) return;
 
@@ -62,6 +62,26 @@
 					imgEl.src = (other.imageUrl || "/pimg.png") + "?v=" + Date.now();
 				}
 			}
+
+			// 채팅 기록 로드
+			async function loadHistory()
+			{
+				const res = await fetch(`/api/messages/${otherEmail}`, { credentials: "include" });
+
+				if (res.ok)
+				{
+					const history = await res.json();
+					chatBox.innerHTML = ""; 
+					history.forEach(msg =>
+					{
+						addMessage(msg.isMe, msg.messageText);
+					});
+					chatBox.scrollTop = chatBox.scrollHeight;
+				}
+			}
+
+			// 페이지 로드 시 실행
+			await loadHistory();
 
 			// 메시지 추가
 			function addMessage(isMine, text) {

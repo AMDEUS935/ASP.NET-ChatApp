@@ -213,4 +213,26 @@ app.MapGet("/api/csrf", (IAntiforgery anti, HttpContext ctx) =>
     .RequireAuthorization()
     .DisableAntiforgery();
 
+app.MapGet("/api/messages/{otherEmail}", async (string otherEmail, ApplicationDbContext db, HttpContext http, UserManager<IdentityUser> userManager) =>
+{
+	var me = await userManager.GetUserAsync(http.User);
+	var other = await userManager.FindByEmailAsync(otherEmail);
+
+	if (me == null || other == null) return Results.Unauthorized();
+
+	var messages = await db.ChattingMsg
+		.Where(m => (m.SenderId == me.Id && m.ReceiverId == other.Id) ||
+					(m.SenderId == other.Id && m.ReceiverId == me.Id))
+		.OrderBy(m => m.Timestamp)
+		.Select(m => new {
+			m.MessageText,
+			isMe = m.SenderId == me.Id,
+			m.Timestamp
+		})
+		.ToListAsync();
+
+	return Results.Ok(messages);
+})
+    .RequireAuthorization();
+
 app.Run();
