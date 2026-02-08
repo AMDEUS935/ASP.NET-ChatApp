@@ -1,0 +1,23 @@
+services:
+
+  # 데이터베이스 서버 (MySQL)
+  db:
+    image: mysql:8.0
+    container_name: chatapp-db
+    environment:
+      MYSQL_ROOT_PASSWORD: "df456258" # 기존 설정된 비밀번호
+      MYSQL_DATABASE: "ChatAppDB"
+    ports:
+      - "3306:3306"
+
+  # 채팅 서버 (ASP.NET Core)
+  web:
+    build: ./ChatAuth
+    container_name: chatapp-server
+    depends_on:
+      - db
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=db;Database=ChatAppDB;Uid=root;Pwd=df456258;Port=3306;

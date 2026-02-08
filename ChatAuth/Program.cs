@@ -9,8 +9,31 @@ using Microsoft.AspNetCore.Antiforgery;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSignalR();
 
+// DB 연결 + 안전한 자동 버전 감지 로직
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "";
+
+ServerVersion GetDatabaseVersion(string connString)
+{
+	int retryCount = 0;
+	while (retryCount < 10)
+	{
+		try { return ServerVersion.AutoDetect(connString); }
+		catch
+		{
+			retryCount++;
+			Console.WriteLine($"DB 연결 대기 중... ({retryCount}/10)");
+			Thread.Sleep(3000);
+		}
+	}
+	return new MySqlServerVersion(new Version(8, 0, 45)); // 최종 실패 시 기본값
+}
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+	options.UseMySql(connectionString, GetDatabaseVersion(connectionString)));
+
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
 // 데이터베이스 설정
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -234,5 +257,21 @@ app.MapGet("/api/messages/{otherEmail}", async (string otherEmail, ApplicationDb
 	return Results.Ok(messages);
 })
     .RequireAuthorization();
+
+// DB 테이블 자동 생성
+using (var scope = app.Services.CreateScope())
+{
+	var services = scope.ServiceProvider;
+	try
+	{
+		var context = services.GetRequiredService<ApplicationDbContext>();
+		context.Database.Migrate();
+		Console.WriteLine("DB 마이그레이션 및 테이블 생성 성공!");
+	}
+	catch (Exception ex)
+	{
+		Console.WriteLine($"마이그레이션 실패: {ex.Message}");
+	}
+}
 
 app.Run();
