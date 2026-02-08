@@ -25,7 +25,7 @@
 - **1:1 DM 구조에 적합**: SignalR Group을 이용해 채널 단위로 송수신
 
 ---
-## 주요 기능 및 화면 (Key Features)
+## 주요 기능 및 화면
 
 ### 1) 인증 및 계정 관리
 
@@ -38,11 +38,11 @@
 
 ---
 
-### 2) 실시간 채팅 시스템 (WebSocket/SignalR)
+### 2) 실시간 채팅 시스템 
 
-| 실시간 유저 목록 (Live Status) | 1:1 채팅 (Direct Message)  |
-| :----------------------------: | :------------------------: |
-|   ![UserList](docs/User.PNG)   | ![Chatting](docs/Chat.PNG) |
+|      실시간 유저 목록      |          1:1 채팅          |
+| :------------------------: | :------------------------: |
+| ![UserList](docs/User.PNG) | ![Chatting](docs/Chat.PNG) |
 
 - **상태 동기화**: SignalR 연결(OnConnected) 이벤트를 감지하여 **접속 여부(Online/Offline) 즉시 반영**
 - **양방향 통신**: 주기적 요청(Polling) 없이, 서버가 클라이언트에게 메시지를 **직접 Push**하여 지연 시간 최소화
@@ -52,7 +52,7 @@
 
 ## 주요 기능
 
-- **실시간 1:1 DM**: SignalR Hub + Group(대화방) 기반 메시지 송수신
+- **실시간 1:1 DM**: SignalR + Group 기반 메시지 송수신
 - **메시지 영속화 + 히스토리 + 오프라인 전달**
 - **로그인/회원가입**: ASP.NET Identity 기반 인증
 - **유저 목록/검색**: 유저 페이지에서 사용자 리스트 조회 및 탐색
@@ -98,7 +98,7 @@ flowchart TD
 
 대용량 트래픽 처리를 고려한 정규화된 데이터 모델링을 수행했습니다.
 
-* **ER Diagram**: `dbdiagram.io`를 활용하여 테이블 간 관계를 정의했습니다.
+* **ER Diagram**: `dbdiagram.io`를 활용하여 테이블 간 관계를 정의
     * `AspNetUsers`와 `ChattingMsg` 간의 1:N 관계를 통한 메시지 히스토리 관리
 
 > ![ERD](docs/ERD.png)
@@ -146,7 +146,7 @@ ORDER BY m.Timestamp DESC;
 
 ---
 
-## 프로젝트 로드맵 (Roadmap)
+## 프로젝트 로드맵 
 
 - 데이터베이스 인덱싱**: 대량의 채팅 데이터 조회 성능을 높이기 위한 인덱스 설계.
 - **서버 사이드 유효성 검증**: 메시지 길이 제한과 같은 서버 기준의 데이터 방어 로직 추가.
@@ -158,23 +158,23 @@ ORDER BY m.Timestamp DESC;
 
 ## 기술 스택 
 
-### **언어 및 프레임워크 (Language & Framework) ** 
+### **언어 및 프레임워크  ** 
 
 - **C# / .NET 8.0**:  C#과 .NET 프레임워크의 기능을 활용한 서버 개발.  
 
-### **백엔드 및 실시간 통신 (Backend & Real-time Communication) ** 
+### **백엔드 및 실시간 통신 ** 
 
 - **ASP.NET Core Web API**:  사용자 인증 및 채팅 히스토리 조회를 위한 REST API 구축.  
 - **SignalR (WebSocket)**:  실시간 양방향 통신 구현 및 1:1 대화방(Group) 관리.  
 
-### **데이터 관리 (Data Management) ** 
+### **데이터 관리 
 
 - **Entity Framework Core**: 객체 지향적 데이터베이스 스키마 설계 및 관리.  
 - **MySQL 8.0**: RDBMS를 통한 데이터 영속성 확보 및 관계형 데이터 모델링 수행.  
 
 ---
 
-### **개발 도구 (Development Tools)**  
+### **개발 도구 
 
 - **Visual Studio 2022**: 주 개발 환경으로 사용하며 생산적인 디버깅 및 프로젝트 관리 수행.  
 - **MySQL Workbench**: SQL 쿼리 성능 테스트 및 데이터 정합성 검증.  
