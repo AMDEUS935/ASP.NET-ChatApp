@@ -178,7 +178,7 @@ ORDER BY m.Timestamp DESC;
 
 - **Visual Studio 2022**: 주 개발 환경으로 사용하며 생산적인 디버깅 및 프로젝트 관리 수행.  
 - **MySQL Workbench**: SQL 쿼리 성능 테스트 및 데이터 정합성 검증.  
-- **Git / GitHub**: 커밋 컨벤션을 준수하는 형상 관리 및 버전 관리 워크플로우 운영.  
+- **Git / GitHub**: 
 
 ---
 
@@ -186,7 +186,7 @@ ORDER BY m.Timestamp DESC;
 
 이 프로젝트는 별도의 설정 없이 명령어 한 줄로 서버와 DB를 즉시 가동할 수 있습니다.  
 
-**1) 필수 조건  **
+**1) 필수 조건**
 
 -  docker 설치 및 실행  
 
