@@ -27,8 +27,8 @@
 
 ### 인증 및 계정 관리
 
-| 회원가입 | 로그인 |
-|:---:|:---:|
+|          회원가입          |          로그인          |
+| :------------------------: | :----------------------: |
 | ![SignUp](docs/SignUp.PNG) | ![Login](docs/Login.PNG) |
 
 - **ASP.NET Core Identity** 기반의 보안 인증 및 세션 관리
@@ -38,9 +38,9 @@
 
 ### 실시간 채팅 시스템 (WebSocket/SignalR)
 
-| 실시간 유저 목록 (Live Status) | 1:1 채팅 (Direct Message) |
-|:---:|:---:|
-| ![UserList](docs/User.PNG) |![Chatting](docs/Chat.PNG) |
+| 실시간 유저 목록 (Live Status) | 1:1 채팅 (Direct Message)  |
+| :----------------------------: | :------------------------: |
+|   ![UserList](docs/User.PNG)   | ![Chatting](docs/Chat.PNG) |
 
 - **상태 동기화**: SignalR 연결(OnConnected) 이벤트를 감지하여 **접속 여부(Online/Offline) 즉시 반영**
 - **양방향 통신**: 주기적 요청(Polling) 없이, 서버가 클라이언트에게 메시지를 **직접 Push**하여 지연 시간 최소화
@@ -63,35 +63,27 @@
 
 ```mermaid
 flowchart TD
-    %% 스타일 정의
     classDef actor fill:#f9f,stroke:#333,stroke-width:2px;
     classDef server fill:#ececff,stroke:#9370db,stroke-width:2px;
-    classDef db fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
-    classDef decision fill:#fff5ad,stroke:#d4aa00,stroke-width:2px;
+    classDef db fill:#fff5ad,stroke:#d4aa00,stroke-width:2px;
 
-    %% 액터 및 시작
-    UserA([Sender]) -->|1. SendDm 호출| Hub[ASP.NET Hub]
+    UserA([Sender]) -->|1. SendDm| Hub[ASP.NET Hub]
     
-    %% 서버 및 DB 로직
-    subgraph Server_Side [Server Logic]
-        direction TB
-        Hub --> Save[(SQLite DB 저장)]
+    subgraph Container_Environment [Docker Container]
+        Hub --> Save[(MySQL Server)]
         Save --> Check{수신자 접속 중?}
         
         Check -- YES --> Push[실시간 Push]
-        Check -- NO --> Offline["DB에 보관"]
+        Check -- NO --> Offline["DB 보관"]
     end
 
-    %% 수신측 처리
     Push -->|WebSocket| UserB([Receiver])
-    UserB -->|2. 재접속/방 입장 시| HistAPI[History API 호출]
-    HistAPI -.->|기록 불러오기| Save
+    UserB -->|2. 재접속 시| HistAPI[History API]
+    HistAPI -.->|기록 조회| Save
     
-    %% 스타일 적용
     class UserA,UserB actor;
     class Hub,Push server;
     class Save db;
-    class Check decision;
 ```
 ---
 
@@ -119,7 +111,8 @@ flowchart TD
 
 - **전송 제한(스팸 방지)**
   - 유저별 초당 N회 제한 + 메시지 길이 제한을 **서버에서 강제**
-    
+  
 - **입력 검증 최소 세트**
   - 메시지/닉네임 길이 제한, 공백/유효성 체크 등 서버 기준으로 방어
+
 ---
